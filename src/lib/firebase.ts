@@ -16,5 +16,4 @@ if (!firebase.apps.length) {
   });
 }
 
-// eslint-disable-next-line import/no-default-export
-export default firebase;
+export { firebase };
