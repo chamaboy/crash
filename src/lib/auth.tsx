@@ -4,15 +4,9 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { createContext, useContext } from "react";
 
+import type { UserData } from "../types/user";
 import { firebase } from "./firebase";
 
-type UserData = {
-  uid: string;
-  email: string | null;
-  name: string | null;
-  provider: string | undefined;
-  photoUrl: string | null;
-};
 type AuthContextProps = {
   user: UserData | undefined;
   loading: boolean;
