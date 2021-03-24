@@ -2,7 +2,10 @@ import { Menu, Transition } from "@headlessui/react";
 
 import type { UserData } from "../types/user";
 
-export const MenuButton = (props: { user: UserData }): JSX.Element => {
+export const UserMenu = (props: {
+  user: UserData;
+  onClick: () => Promise<void>;
+}): JSX.Element => {
   const user = props.user;
   return (
     <div className="flex items-center justify-center">
@@ -33,9 +36,8 @@ export const MenuButton = (props: { user: UserData }): JSX.Element => {
                     className="absolute right-0 w-56 mt-1 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none"
                   >
                     <div className="px-4 py-3">
-                      <p className="text-sm leading-5">Signed in as</p>
-                      <p className="text-sm font-medium leading-5 text-gray-900 truncate">
-                        {user.email}
+                      <p className="text-sm font-bold leading-5 text-gray-900 truncate">
+                        {user.name}
                       </p>
                     </div>
 
@@ -142,13 +144,13 @@ export const MenuButton = (props: { user: UserData }): JSX.Element => {
                       <Menu.Item>
                         {({ active }) => {
                           return (
-                            <a
-                              href="#sign-out"
+                            <button
                               className={`${
                                 active
                                   ? "bg-gray-100 text-gray-900"
                                   : "text-gray-700"
                               } flex items-center w-full px-4 py-2 text-sm leading-5 text-left`}
+                              onClick={props.onClick}
                             >
                               <svg
                                 className="w-4 h-4 mr-3"
@@ -165,7 +167,7 @@ export const MenuButton = (props: { user: UserData }): JSX.Element => {
                                 />
                               </svg>
                               <span>ログアウト</span>
-                            </a>
+                            </button>
                           );
                         }}
                       </Menu.Item>
