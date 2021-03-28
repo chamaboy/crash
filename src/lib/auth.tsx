@@ -6,6 +6,7 @@ import { createContext, useContext } from "react";
 
 import type { UserData } from "../types/user";
 import { firebase } from "./firebase";
+import { createUser, getUser } from "./user-db";
 
 type AuthContextProps = {
   user: UserData | undefined;
@@ -50,12 +51,16 @@ const useProvideAuth = () => {
     };
   };
 
-  const handleUser = (rawUser: User | null | false) => {
+  const handleUser = async (rawUser: User | null | false) => {
     if (rawUser) {
-      const user = formatUser(rawUser);
+      const userData: UserData = await getUser(rawUser.uid);
+      if (!userData) {
+        const user = formatUser(rawUser);
+        await createUser(user);
+      }
       setLoading(false);
-      setUser(user);
-      return user;
+      setUser(userData);
+      return userData;
     } else {
       setLoading(true);
       setUser(undefined);
@@ -63,7 +68,7 @@ const useProvideAuth = () => {
     }
   };
 
-  const signinWithGoogle = async () => {
+  const signinWithGoogle = async (): Promise<void> => {
     setLoading(true);
     const provider = new firebase.auth.GoogleAuthProvider();
     return firebase
@@ -74,7 +79,7 @@ const useProvideAuth = () => {
       });
   };
 
-  const signout = async () => {
+  const signout = async (): Promise<void> => {
     return firebase
       .auth()
       .signOut()
