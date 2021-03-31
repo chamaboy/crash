@@ -1,14 +1,15 @@
 import Head from "next/head";
-import type { FC } from "react";
 
-const Home: FC = () => {
+const Home = (): JSX.Element => {
   return (
     <>
       <Head>
         <title>トップページ</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1>トップページです</h1>
+      <div className="pt-10">
+        <h1>トップページです</h1>
+      </div>
     </>
   );
 };
