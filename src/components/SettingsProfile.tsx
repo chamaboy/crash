@@ -9,9 +9,9 @@ import { Textarea } from "./Textarea";
 export const SettingsProfile = (): JSX.Element => {
   const auth = useAuth();
   return (
-    <div className="my-8 md:my-12">
+    <div className="my-8 md:my-12 md:flex md:justify-between md:gap-8">
       <label
-        className="flex flex-col items-center cursor-pointer"
+        className="flex flex-col items-center cursor-pointer md:mt-2"
         htmlFor="avatar"
       >
         <input className="hidden" id="avatar" type="file" />
@@ -21,13 +21,13 @@ export const SettingsProfile = (): JSX.Element => {
           <span>変更する</span>
         </div>
       </label>
-      <div className="mt-6 md:mt-0">
+      <div className="mt-6 md:mt-0 md:flex-1">
         <Input label="名前" placeholder="例) キャッシュレス太郎" />
         <div className="mt-6">
           <Textarea
             label="自己紹介"
             placeholder="例) 電子マネーが大好きです"
-            key="about"
+            formLabel="about"
           />
         </div>
         <div className="mt-8 text-center">

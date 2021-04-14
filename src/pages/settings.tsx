@@ -8,7 +8,7 @@ const Settings = (): JSX.Element => {
       <Head>
         <title>プロフィールの編集</title>
       </Head>
-      <div className="pt-10">
+      <div className="pt-10 max-w-xl mx-auto">
         <h1>設定</h1>
         <SettingsProfile />
       </div>
