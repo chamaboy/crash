@@ -1,4 +1,5 @@
 import { RefreshIcon } from "@heroicons/react/outline";
+import { useForm } from "react-hook-form";
 
 import { useAuth } from "../lib/auth";
 import { Avatar } from "./Avatar";
@@ -8,6 +9,10 @@ import { Textarea } from "./Textarea";
 
 export const SettingsProfile = (): JSX.Element => {
   const auth = useAuth();
+  const { register, handleSubmit } = useForm();
+  const onSubmit = (data: any) => {
+    alert(JSON.stringify(data));
+  };
   return (
     <div className="my-8 md:my-12 md:flex md:justify-between md:gap-8">
       <label
@@ -22,17 +27,27 @@ export const SettingsProfile = (): JSX.Element => {
         </div>
       </label>
       <div className="mt-6 md:mt-0 md:flex-1">
-        <Input label="名前" placeholder="例) キャッシュレス太郎" />
-        <div className="mt-6">
-          <Textarea
-            label="自己紹介"
-            placeholder="例) 電子マネーが大好きです"
-            formLabel="about"
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Input
+            label="名前"
+            placeholder="例) キャッシュレス太郎"
+            formLabel="name"
+            register={register}
+            required
           />
-        </div>
-        <div className="mt-8 text-center">
-          <Button name="更新する" />
-        </div>
+          <div className="mt-6">
+            <Textarea
+              label="自己紹介"
+              placeholder="例) 電子マネーが大好きです"
+              formLabel="about"
+              register={register}
+              required
+            />
+          </div>
+          <div className="mt-8 text-center">
+            <Button name="更新する" />
+          </div>
+        </form>
       </div>
     </div>
   );
