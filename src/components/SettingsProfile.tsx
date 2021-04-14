@@ -7,10 +7,15 @@ import { Button } from "./Button";
 import { Input } from "./Input";
 import { Textarea } from "./Textarea";
 
+type FormInputs = {
+  name: string;
+  about: string;
+};
+
 export const SettingsProfile = (): JSX.Element => {
   const auth = useAuth();
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data: any) => {
+  const { register, handleSubmit } = useForm<FormInputs>();
+  const onSubmit = (data: FormInputs) => {
     alert(JSON.stringify(data));
   };
   return (
