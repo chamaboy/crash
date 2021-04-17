@@ -1,12 +1,17 @@
 import type { Path, UseFormRegister } from "react-hook-form";
 
+type Validators = {
+  required?: boolean;
+  maxLength?: number;
+};
+
 type TextareaProps = {
   label: string;
   rows?: number;
   placeholder?: string;
   formLabel: Path<any>;
   register: UseFormRegister<any>;
-  required: boolean;
+  validators: Validators;
 };
 
 export const Textarea = (props: TextareaProps): JSX.Element => {
@@ -16,8 +21,9 @@ export const Textarea = (props: TextareaProps): JSX.Element => {
     placeholder,
     formLabel,
     register,
-    required,
+    validators,
   } = props as TextareaProps;
+  const { required, maxLength } = validators;
   return (
     <>
       <label
@@ -31,7 +37,7 @@ export const Textarea = (props: TextareaProps): JSX.Element => {
         rows={rows}
         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md"
         placeholder={placeholder}
-        {...register(formLabel, { required })}
+        {...register(formLabel, { required, maxLength })}
       ></textarea>
     </>
   );
