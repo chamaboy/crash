@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { useAuth } from "../lib/auth";
+import { updateUser } from "../lib/user-db";
 import { Avatar } from "./Avatar";
 import { Button } from "./Button";
 import { ErrorMessage } from "./ErrorMessage";
@@ -23,7 +24,10 @@ export const SettingsProfile = (): JSX.Element => {
     setValue,
   } = useForm<FormInputs>();
   const onSubmit = (data: FormInputs) => {
-    alert(JSON.stringify(data));
+    const userData = { uid: auth.user?.uid, ...data };
+    updateUser(userData).then(() => {
+      return alert("データを更新しました");
+    });
   };
 
   const nameValidators = {
@@ -34,13 +38,17 @@ export const SettingsProfile = (): JSX.Element => {
 
   useEffect(() => {
     const userName = auth.user?.name as string;
+    const profile = auth.user?.profile;
     setValue("name", userName);
+    if (profile) {
+      setValue("profile", profile);
+    }
   }, [auth.user, setValue]);
 
   return (
     <div className="my-8 md:my-12 md:flex md:justify-between md:gap-8">
       <label
-        className="flex flex-col items-center cursor-pointer md:mt-2"
+        className="flex flex-col items-center cursor-pointer md:mt-2 md:mb-36"
         htmlFor="avatar"
       >
         <input className="hidden" id="avatar" type="file" />

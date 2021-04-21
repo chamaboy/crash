@@ -4,4 +4,5 @@ export interface UserData {
   readonly name: string | null;
   readonly provider: string | undefined;
   readonly photoUrl: string | null;
+  readonly profile?: string;
 }
