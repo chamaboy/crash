@@ -1,5 +1,6 @@
+import { Dialog } from "@headlessui/react";
 import { RefreshIcon } from "@heroicons/react/outline";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { useAuth } from "../lib/auth";
@@ -8,6 +9,7 @@ import { Avatar } from "./Avatar";
 import { Button } from "./Button";
 import { ErrorMessage } from "./ErrorMessage";
 import { Input } from "./Input";
+import { Modal } from "./Modal";
 import { Textarea } from "./Textarea";
 
 type FormInputs = {
@@ -16,6 +18,8 @@ type FormInputs = {
 };
 
 export const SettingsProfile = (): JSX.Element => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const auth = useAuth();
   const {
     register,
@@ -50,6 +54,12 @@ export const SettingsProfile = (): JSX.Element => {
       <label
         className="flex flex-col items-center cursor-pointer md:mt-2 md:mb-36"
         htmlFor="avatar"
+        onChange={(e) => {
+          const target: any = e.target;
+          const file = target.files[0];
+          console.log(file);
+          return setIsOpen(true);
+        }}
       >
         <input className="hidden" id="avatar" type="file" />
         <Avatar src={auth.user?.photoUrl} size="md" />
@@ -58,6 +68,37 @@ export const SettingsProfile = (): JSX.Element => {
           <span>変更する</span>
         </div>
       </label>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          return setIsOpen(false);
+        }}
+      >
+        <Dialog.Title
+          as="h3"
+          className="text-lg font-medium leading-6 text-gray-900"
+        >
+          Payment successful
+        </Dialog.Title>
+        <div className="mt-2">
+          <p className="text-sm text-gray-500">
+            Your payment has been successfully submitted. We’ve sent your an
+            email with all of the details of your order.
+          </p>
+        </div>
+
+        <div className="mt-4">
+          <button
+            type="button"
+            className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+            onClick={() => {
+              return setIsOpen(false);
+            }}
+          >
+            Got it, thanks!
+          </button>
+        </div>
+      </Modal>
       <div className="mt-6 md:mt-0 md:flex-1">
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
