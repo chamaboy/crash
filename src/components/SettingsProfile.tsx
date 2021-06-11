@@ -1,9 +1,12 @@
-import { Dialog } from "@headlessui/react";
 import { RefreshIcon } from "@heroicons/react/outline";
-import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Cropper from "react-easy-crop";
+import type { Area, Point } from "react-easy-crop/types";
 import { useForm } from "react-hook-form";
 
 import { useAuth } from "../lib/auth";
+import { getCroppedImg } from "../lib/crop-image";
 import { updateUser } from "../lib/user-db";
 import { Avatar } from "./Avatar";
 import { Button } from "./Button";
@@ -18,15 +21,59 @@ type FormInputs = {
 };
 
 export const SettingsProfile = (): JSX.Element => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const auth = useAuth();
+  const [image, setImage] = useState<string | null | undefined>(null);
+  const [imageData, setImageData] = useState<
+    string | ArrayBuffer | null | undefined
+  >(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState<number>(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+
   const {
     register,
     formState: { errors },
     handleSubmit,
     setValue,
   } = useForm<FormInputs>();
+
+  const onCropComplete = useCallback(
+    (croppedArea: Area, croppedAreaPixels: Area) => {
+      setCroppedAreaPixels(croppedAreaPixels);
+    },
+    []
+  );
+
+  const onFileChange = (e: FormEvent<HTMLLabelElement>) => {
+    const target: any = e.target;
+    const files = target.files;
+    if (files.length) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImageData(e.target?.result);
+      };
+      reader.readAsDataURL(files[0]);
+      target.value = "";
+      setIsOpen(true);
+    }
+  };
+
+  const showCroppedImage = useCallback(async () => {
+    try {
+      const croppedImage: any = await getCroppedImg(
+        imageData as string,
+        croppedAreaPixels as Area
+      );
+      console.log("donee", { croppedImage });
+      setImage(croppedImage);
+      setZoom(1);
+      setIsOpen(false);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [croppedAreaPixels]);
+
   const onSubmit = (data: FormInputs) => {
     const userData = { uid: auth.user?.uid, ...data };
     updateUser(userData).then(() => {
@@ -49,20 +96,21 @@ export const SettingsProfile = (): JSX.Element => {
     }
   }, [auth.user, setValue]);
 
+  useEffect(() => {
+    setImage(auth.user?.photoUrl);
+  }, [auth.user]);
+
   return (
     <div className="my-8 md:my-12 md:flex md:justify-between md:gap-8">
       <label
         className="flex flex-col items-center cursor-pointer md:mt-2 md:mb-36"
         htmlFor="avatar"
         onChange={(e) => {
-          const target: any = e.target;
-          const file = target.files[0];
-          console.log(file);
-          return setIsOpen(true);
+          return onFileChange(e);
         }}
       >
         <input className="hidden" id="avatar" type="file" />
-        <Avatar src={auth.user?.photoUrl} size="md" />
+        <Avatar src={image} size="md" />
         <div className="inline-flex items-center text-xs font-bold text-gray-500 mt-2  hover:text-indigo-500">
           <RefreshIcon className="w-4 h-4 mr-1" />
           <span>変更する</span>
@@ -74,17 +122,17 @@ export const SettingsProfile = (): JSX.Element => {
           return setIsOpen(false);
         }}
       >
-        <Dialog.Title
-          as="h3"
-          className="text-lg font-medium leading-6 text-gray-900"
-        >
-          Payment successful
-        </Dialog.Title>
-        <div className="mt-2">
-          <p className="text-sm text-gray-500">
-            Your payment has been successfully submitted. We’ve sent your an
-            email with all of the details of your order.
-          </p>
+        <div className="relative w-full h-52">
+          <Cropper
+            image={imageData as string}
+            crop={crop}
+            zoom={zoom}
+            aspect={1}
+            cropShape="round"
+            onCropChange={setCrop}
+            onCropComplete={onCropComplete}
+            onZoomChange={setZoom}
+          />
         </div>
 
         <div className="mt-4">
@@ -92,10 +140,10 @@ export const SettingsProfile = (): JSX.Element => {
             type="button"
             className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
             onClick={() => {
-              return setIsOpen(false);
+              return showCroppedImage();
             }}
           >
-            Got it, thanks!
+            確定する
           </button>
         </div>
       </Modal>
