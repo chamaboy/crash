@@ -1,4 +1,5 @@
 import { RefreshIcon } from "@heroicons/react/outline";
+import { ZoomInIcon, ZoomOutIcon } from "@heroicons/react/solid";
 import type { FormEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 import Cropper from "react-easy-crop";
@@ -121,6 +122,7 @@ export const SettingsProfile = (): JSX.Element => {
         onClose={() => {
           return setIsOpen(false);
         }}
+        className="max-w-xs"
       >
         <div className="relative w-full h-52">
           <Cropper
@@ -135,15 +137,41 @@ export const SettingsProfile = (): JSX.Element => {
           />
         </div>
 
-        <div className="mt-4">
+        <div className="mt-4 flex items-center">
+          <ZoomOutIcon className="w-5 h-5 text-gray-500 mr-2" />
+          <input
+            type="range"
+            value={zoom}
+            min={1}
+            max={3}
+            step={0.1}
+            onChange={(e) => {
+              const zoom = +e.target.value;
+              setZoom(zoom);
+            }}
+            className="w-full cursor-pointer outline-none"
+          />
+          <ZoomInIcon className="w-5 h-5 text-gray-500 ml-2" />
+        </div>
+
+        <div className="mt-4 sm:flex sm:flex-row-reverse">
           <button
             type="button"
-            className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+            className="w-full inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
             onClick={() => {
               return showCroppedImage();
             }}
           >
             確定する
+          </button>
+          <button
+            type="button"
+            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+            onClick={() => {
+              return setIsOpen(false);
+            }}
+          >
+            キャンセル
           </button>
         </div>
       </Modal>
