@@ -1,7 +1,9 @@
-export const Button = (props: {
+type ButtonProps = {
   name: string;
-  onClick: () => Promise<void>;
-}): JSX.Element => {
+  onClick?: () => Promise<void>;
+};
+
+export const Button = (props: ButtonProps): JSX.Element => {
   return (
     <button
       onClick={props.onClick}

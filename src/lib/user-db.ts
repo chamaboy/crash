@@ -8,7 +8,7 @@ export const createUser = (user: UserData): Promise<void> => {
 };
 
 export const updateUser = (data: Partial<UserData>) => {
-  return db.doc(`users/${data.uid}`).set({ data }, { merge: true });
+  return db.doc(`users/${data.uid}`).set(data, { merge: true });
 };
 
 export const getUser = async (uid: string): Promise<UserData> => {
